@@ -27,7 +27,7 @@ func Translate(w http.ResponseWriter, req *http.Request) {
 	client := &http.Client{}
 
 	form := url.Values{}
-	form.Add("text", translationRequest.TargetLanguage)
+	form.Add("text", translationRequest.TranslateText)
 	form.Add("source_lang", translationRequest.SourceLanguage)
 	form.Add("target_lang", translationRequest.TargetLanguage)
 
