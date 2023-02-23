@@ -21,6 +21,8 @@ func Translate(w http.ResponseWriter, req *http.Request) {
 		Key:            key,
 	}
 
+	fmt.Printf("%+v\n", translationRequest)
+
 	fmt.Println("Calling API...")
 	client := &http.Client{}
 
