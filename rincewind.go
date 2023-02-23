@@ -12,6 +12,8 @@ import (
 )
 
 func Translate(w http.ResponseWriter, req *http.Request) {
+	GetKey()
+
 	translationRequest := TranslationRequest{
 		TranslateText:  req.FormValue("text"),
 		SourceLanguage: req.FormValue("source"),
