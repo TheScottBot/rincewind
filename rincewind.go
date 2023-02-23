@@ -11,15 +11,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Translate(w http.ResponseWriter, req *http.Request) {
+func Translate(translationRequest TranslationRequest) TranslationResponse {
 	GetKey()
-
-	translationRequest := TranslationRequest{
-		TranslateText:  req.FormValue("text"),
-		SourceLanguage: req.FormValue("source"),
-		TargetLanguage: req.FormValue("target"),
-		Key:            key,
-	}
 
 	fmt.Printf("%+v\n", translationRequest)
 
@@ -58,7 +51,7 @@ func Translate(w http.ResponseWriter, req *http.Request) {
 	json.Unmarshal(bodyBytes, &responseObject)
 	fmt.Printf("API Response %+v\n", responseObject)
 
-	w.Write(bodyBytes)
+	return responseObject
 }
 
 func GetKey() {
