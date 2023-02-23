@@ -32,12 +32,14 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 
 	if err != nil {
 		fmt.Print(err.Error())
+		return TranslationResponse{}, err
 	}
 
 	resp, err := client.Do(req)
 
 	if err != nil {
 		fmt.Print(err.Error())
+		return TranslationResponse{}, err
 	}
 
 	defer resp.Body.Close()
@@ -45,6 +47,7 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 
 	if err != nil {
 		fmt.Print(err.Error())
+		return TranslationResponse{}, err
 	}
 
 	var responseObject TranslationResponse
