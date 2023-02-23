@@ -11,20 +11,27 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Translate(request TranslationRequest) {
+func Translate(w http.ResponseWriter, req *http.Request) {
+	translationRequest := TranslationRequest{
+		TranslateText:  req.FormValue("text"),
+		SourceLanguage: req.FormValue("source"),
+		TargetLanguage: req.FormValue("target"),
+		Key:            key,
+	}
+
 	fmt.Println("Calling API...")
 	client := &http.Client{}
 
 	form := url.Values{}
-	form.Add("text", request.TargetLanguage)
-	form.Add("source_lang", request.SourceLanguage)
-	form.Add("target_lang", request.TargetLanguage)
+	form.Add("text", translationRequest.TargetLanguage)
+	form.Add("source_lang", translationRequest.SourceLanguage)
+	form.Add("target_lang", translationRequest.TargetLanguage)
 
 	req, err := http.NewRequest("POST", "https://api.deepl.com/v2/translate", strings.NewReader(form.Encode()))
 
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Authorization", request.Key)
+	req.Header.Add("Authorization", translationRequest.Key)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -48,18 +55,6 @@ func Translate(request TranslationRequest) {
 	fmt.Printf("API Response %+v\n", responseObject)
 
 	w.Write(bodyBytes)
-}
-
-func CallApiFromWeb(w http.ResponseWriter, req *http.Request) {
-
-	translationRequest := TranslationRequest{
-		TranslateText:  req.FormValue("text"),
-		SourceLanguage: req.FormValue("source"),
-		TargetLanguage: req.FormValue("target"),
-		Key:            key,
-	}
-
-	Translate(translationRequest)
 }
 
 func GetKey() {
