@@ -11,31 +11,20 @@ import (
 	"github.com/spf13/viper"
 )
 
-func CallApiFromWeb(w http.ResponseWriter, req *http.Request) {
-
-	translationRequest := translationRequest{
-		translateText:  req.FormValue("text"),
-		sourceLanguage: req.FormValue("source"),
-		targetLanguage: req.FormValue("target"),
-	}
-
-	callDeepLApi(w, translationRequest)
-}
-
-func callDeepLApi(w http.ResponseWriter, request translationRequest) {
+func Translate(request TranslationRequest) {
 	fmt.Println("Calling API...")
 	client := &http.Client{}
 
 	form := url.Values{}
-	form.Add("text", request.translateText)
-	form.Add("source_lang", request.sourceLanguage)
-	form.Add("target_lang", request.targetLanguage)
+	form.Add("text", request.TargetLanguage)
+	form.Add("source_lang", request.SourceLanguage)
+	form.Add("target_lang", request.TargetLanguage)
 
 	req, err := http.NewRequest("POST", "https://api.deepl.com/v2/translate", strings.NewReader(form.Encode()))
 
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Authorization", Key)
+	req.Header.Add("Authorization", request.Key)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -61,17 +50,30 @@ func callDeepLApi(w http.ResponseWriter, request translationRequest) {
 	w.Write(bodyBytes)
 }
 
+func CallApiFromWeb(w http.ResponseWriter, req *http.Request) {
+
+	translationRequest := TranslationRequest{
+		TranslateText:  req.FormValue("text"),
+		SourceLanguage: req.FormValue("source"),
+		TargetLanguage: req.FormValue("target"),
+		Key:            key,
+	}
+
+	Translate(translationRequest)
+}
+
 func GetKey() {
 	viper.SetConfigFile("config.json")
 	viper.ReadInConfig()
-	Key = viper.GetString("Key")
+	key = viper.GetString("Key")
 	Port = viper.GetString("Port")
 }
 
-type translationRequest struct {
-	translateText  string
-	sourceLanguage string
-	targetLanguage string
+type TranslationRequest struct {
+	TranslateText  string
+	SourceLanguage string
+	TargetLanguage string
+	Key            string
 }
 
 type TranslationResponse struct {
@@ -83,5 +85,5 @@ type Translations struct {
 	Text           string `json:"text"`
 }
 
-var Key string
+var key string
 var Port string
