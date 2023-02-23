@@ -64,7 +64,7 @@ func Translate(w http.ResponseWriter, req *http.Request) {
 func GetKey() {
 	viper.SetConfigFile("config.json")
 	viper.ReadInConfig()
-	key = viper.GetString("Key")
+	Key = viper.GetString("Key")
 }
 
 type TranslationRequest struct {
@@ -83,4 +83,4 @@ type Translations struct {
 	Text           string `json:"text"`
 }
 
-var key string
+var Key string
