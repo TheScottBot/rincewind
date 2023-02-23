@@ -12,7 +12,7 @@ import (
 )
 
 func Translate(translationRequest TranslationRequest) (TranslationResponse, error) {
-	GetKey()
+	getKey()
 
 	fmt.Printf("%+v\n", translationRequest)
 
@@ -28,7 +28,7 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Authorization", translationRequest.Key)
+	req.Header.Add("Authorization", key)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -54,17 +54,16 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 	return responseObject, err
 }
 
-func GetKey() {
+func getKey() {
 	viper.SetConfigFile("config.json")
 	viper.ReadInConfig()
-	Key = viper.GetString("Key")
+	key = viper.GetString("Key")
 }
 
 type TranslationRequest struct {
 	TranslateText  string
 	SourceLanguage string
 	TargetLanguage string
-	Key            string
 }
 
 type TranslationResponse struct {
@@ -76,4 +75,4 @@ type Translations struct {
 	Text           string `json:"text"`
 }
 
-var Key string
+var key string
