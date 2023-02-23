@@ -70,10 +70,10 @@ type TranslationRequest struct {
 }
 
 type TranslationResponse struct {
-	Translations []Translations `json:"translations"`
+	Translations []translations `json:"translations"`
 }
 
-type Translations struct {
+type translations struct {
 	LanguageSource string `json:"detected_language_source"`
 	Text           string `json:"text"`
 }
