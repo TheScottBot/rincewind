@@ -13,6 +13,7 @@ import (
 
 func Translate(translationRequest TranslationRequest) (TranslationResponse, error) {
 	getKey()
+	setupDefaults()
 
 	fmt.Printf("%+v\n", translationRequest)
 
@@ -21,8 +22,8 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 
 	form := url.Values{}
 	form.Add("text", translationRequest.TranslateText)
-	form.Add("source_lang", translationRequest.SourceLanguage)
-	form.Add("target_lang", translationRequest.TargetLanguage)
+	form.Add("source_lang", sourceOfDefault(translationRequest.SourceLanguage))
+	form.Add("target_lang", targetOrDefault(translationRequest.TargetLanguage))
 
 	req, err := http.NewRequest("POST", "https://api.deepl.com/v2/translate", strings.NewReader(form.Encode()))
 
@@ -57,6 +58,29 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 	return responseObject, err
 }
 
+func setupDefaults() {
+	viper.SetConfigFile("config.json")
+	viper.ReadInConfig()
+	defaultSource = viper.GetString("DefaultSource")
+	defaultTarget = viper.GetString("DefaultTargetLang")
+
+}
+
+func sourceOfDefault(value string) string {
+	return valueOrDefault(value, defaultSource)
+}
+
+func targetOrDefault(value string) string {
+	return valueOrDefault(value, defaultTarget)
+}
+
+func valueOrDefault(value string, defaultValue string) string {
+	if len(value) > 0 {
+		return value
+	}
+	return defaultValue
+}
+
 func getKey() {
 	viper.SetConfigFile("config.json")
 	viper.ReadInConfig()
@@ -78,4 +102,4 @@ type translations struct {
 	Text           string `json:"text"`
 }
 
-var key string
+var key, defaultSource, defaultTarget string

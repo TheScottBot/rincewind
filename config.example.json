@@ -1,3 +1,5 @@
 {
-    "Key": "DeepL-Auth-Key [your key here]"
+    "Key": "DeepL-Auth-Key [your key here]",
+    "DefaultSource": "EN",
+    "DefaultTargetLang": "DE"
 }
