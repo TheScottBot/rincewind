@@ -65,7 +65,6 @@ func GetKey() {
 	viper.SetConfigFile("config.json")
 	viper.ReadInConfig()
 	key = viper.GetString("Key")
-	Port = viper.GetString("Port")
 }
 
 type TranslationRequest struct {
@@ -85,4 +84,3 @@ type Translations struct {
 }
 
 var key string
-var Port string
