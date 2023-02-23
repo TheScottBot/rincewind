@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Translate(translationRequest TranslationRequest) TranslationResponse {
+func Translate(translationRequest TranslationRequest) (TranslationResponse, error) {
 	GetKey()
 
 	fmt.Printf("%+v\n", translationRequest)
@@ -51,7 +51,7 @@ func Translate(translationRequest TranslationRequest) TranslationResponse {
 	json.Unmarshal(bodyBytes, &responseObject)
 	fmt.Printf("API Response %+v\n", responseObject)
 
-	return responseObject
+	return responseObject, err
 }
 
 func GetKey() {
