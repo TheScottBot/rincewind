@@ -64,6 +64,7 @@ func setupDefaults() {
 	defaultSource = viper.GetString("DefaultSource")
 	defaultTarget = viper.GetString("DefaultTargetLang")
 
+	fmt.Println("Defaults set " + defaultSource + " " + defaultTarget)
 }
 
 func sourceOfDefault(value string) string {
