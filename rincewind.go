@@ -35,7 +35,7 @@ func callDeepLApi(w http.ResponseWriter, request translationRequest) {
 
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Authorization", key)
+	req.Header.Add("Authorization", Key)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -64,8 +64,8 @@ func callDeepLApi(w http.ResponseWriter, request translationRequest) {
 func GetKey() {
 	viper.SetConfigFile("config.json")
 	viper.ReadInConfig()
-	key = viper.GetString("Key")
-	port = viper.GetString("Port")
+	Key = viper.GetString("Key")
+	Port = viper.GetString("Port")
 }
 
 type translationRequest struct {
