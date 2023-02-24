@@ -24,6 +24,15 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 	form.Add("text", translationRequest.TranslateText)
 	form.Add("source_lang", sourceOfDefault(translationRequest.SourceLanguage))
 	form.Add("target_lang", targetOrDefault(translationRequest.TargetLanguage))
+	form.Add("split_sentences", translationRequest.SplitSentences)
+	form.Add("preserve_formatting", translationRequest.PreserveFormatting)
+	form.Add("formality", translationRequest.Formality)
+	form.Add("glossary_id", translationRequest.GlossaryID)
+	form.Add("tag_handling", translationRequest.TagHandling)
+	form.Add("non_splitting_tags", translationRequest.NonSplittingTags)
+	form.Add("outline_detection", translationRequest.OutlineDetection)
+	form.Add("splitting_tags", translationRequest.SplittingTags)
+	form.Add("ignore_tags", translationRequest.IgnoreTags)
 
 	req, err := http.NewRequest("POST", "https://api.deepl.com/v2/translate", strings.NewReader(form.Encode()))
 
@@ -89,9 +98,18 @@ func getKey() {
 }
 
 type TranslationRequest struct {
-	TranslateText  string
-	SourceLanguage string
-	TargetLanguage string
+	TranslateText      string
+	SourceLanguage     string
+	TargetLanguage     string
+	SplitSentences     string
+	PreserveFormatting string
+	Formality          string
+	GlossaryID         string
+	TagHandling        string
+	NonSplittingTags   string
+	OutlineDetection   string
+	SplittingTags      string
+	IgnoreTags         string
 }
 
 type TranslationResponse struct {
