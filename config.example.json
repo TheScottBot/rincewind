@@ -1,4 +1,5 @@
 {
+    "Endpoint": "https://api.deepl.com/v2/translate",
     "Key": "DeepL-Auth-Key [your key here]",
     "DefaultSource": "EN",
     "DefaultTargetLang": "DE"

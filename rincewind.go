@@ -11,10 +11,22 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Translate(translationRequest TranslationRequest) (TranslationResponse, error) {
-	getKey()
-	setupDefaults()
+var r *Rincewind
 
+func init() {
+	r = New()
+}
+
+func New() *Rincewind {
+	r := new(Rincewind)
+	getApiDetails(r)
+	setupDefaults(r)
+	return r
+}
+
+func Translate(re TranslationRequest) (TranslationResponse, error) { return r.Translate(re) }
+
+func (r *Rincewind) Translate(translationRequest TranslationRequest) (TranslationResponse, error) {
 	fmt.Printf("%+v\n", translationRequest)
 
 	fmt.Println("Calling API...")
@@ -34,11 +46,11 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 	form.Add("splitting_tags", translationRequest.SplittingTags)
 	form.Add("ignore_tags", translationRequest.IgnoreTags)
 
-	req, err := http.NewRequest("POST", "https://api.deepl.com/v2/translate", strings.NewReader(form.Encode()))
+	req, err := http.NewRequest("POST", r.apiEndPoint, strings.NewReader(form.Encode()))
 
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Authorization", key)
+	req.Header.Add("Authorization", r.apiKey)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -64,24 +76,43 @@ func Translate(translationRequest TranslationRequest) (TranslationResponse, erro
 	json.Unmarshal(bodyBytes, &responseObject)
 	fmt.Printf("API Response %+v\n", responseObject)
 
+	if responseObject.Translations[0].Text == "" {
+		return TranslationResponse{}, err
+	}
 	return responseObject, err
 }
 
-func setupDefaults() {
+func SetDefaultTarget(in string) { r.SetDefaultTarget(in) }
+
+func (r *Rincewind) SetDefaultTarget(in string) {
+	if in != "" {
+		r.defaultTargetLanguage = in
+	}
+}
+
+func SetDefaultSource(in string) { r.SetDefaultSource(in) }
+
+func (r *Rincewind) SetDefaultSource(in string) {
+	if in != "" {
+		r.defaultSourceLanguage = in
+	}
+}
+
+func setupDefaults(r *Rincewind) {
 	viper.SetConfigFile("config.json")
 	viper.ReadInConfig()
-	defaultSource = viper.GetString("DefaultSource")
-	defaultTarget = viper.GetString("DefaultTargetLang")
+	r.defaultSourceLanguage = viper.GetString("DefaultSource")
+	r.defaultTargetLanguage = viper.GetString("DefaultTargetLang")
 
-	fmt.Println("Defaults set " + defaultSource + " " + defaultTarget)
+	fmt.Println("Defaults set " + r.defaultSourceLanguage + " " + r.defaultTargetLanguage)
 }
 
 func sourceOfDefault(value string) string {
-	return valueOrDefault(value, defaultSource)
+	return valueOrDefault(value, r.defaultSourceLanguage)
 }
 
 func targetOrDefault(value string) string {
-	return valueOrDefault(value, defaultTarget)
+	return valueOrDefault(value, r.defaultTargetLanguage)
 }
 
 func valueOrDefault(value string, defaultValue string) string {
@@ -91,10 +122,19 @@ func valueOrDefault(value string, defaultValue string) string {
 	return defaultValue
 }
 
-func getKey() {
+func getApiDetails(r *Rincewind) {
 	viper.SetConfigFile("config.json")
 	viper.ReadInConfig()
-	key = viper.GetString("Key")
+	r.apiKey = viper.GetString("Key")
+	r.apiEndPoint = viper.GetString("Endpoint")
+	fmt.Println("Endpoint set " + r.apiEndPoint)
+}
+
+type Rincewind struct {
+	defaultSourceLanguage string
+	defaultTargetLanguage string
+	apiEndPoint           string
+	apiKey                string
 }
 
 type TranslationRequest struct {
@@ -120,5 +160,3 @@ type translations struct {
 	LanguageSource string `json:"detected_language_source"`
 	Text           string `json:"text"`
 }
-
-var key, defaultSource, defaultTarget string
